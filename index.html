@@ -1,12 +1,581 @@
 <!DOCTYPE html>
-<html lang='ru'>
+<html lang="ru">
 <head>
-  <meta charset="UTF-8'>
-  <title>simple_project</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Хакатон Алгоритмика Пенза 2026 · Команды</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f8f1ff 0%, #f2e6ff 100%);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .attendance-legend {
+          text-align: center;
+          margin: 1rem 0 2rem;
+          font-size: 1.1rem;
+          font-weight: 600;
+          display: flex;
+          justify-content: center;
+          gap: 1.5rem;
+          flex-wrap: wrap;
+        }
+
+        .attendance-legend .badge {
+          display: inline-block;
+          width: 24px;
+          height: 24px;
+          line-height: 24px;
+          border-radius: 50%;
+          text-align: center;
+          font-size: 1rem;
+          margin-right: 0.5rem;
+        }
+
+        .attendance-legend .attended { background: #7ec850; color: white; }
+        .attendance-legend .absent { background: #cccccc; color: white; }
+        .container {
+            max-width: 1400px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6b2f8b 0%, #9f4dbf 50%, #ffb347 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+            text-shadow: 0 4px 12px rgba(147, 64, 196, 0.2);
+            margin-bottom: 0.5rem;
+        }
+
+        .header h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #4a2b6e;
+            margin-top: 0.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .badge-total {
+            background: #ffdb9d;
+            color: #4a2b6e;
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 10px rgba(106, 27, 154, 0.15);
+            border: 1px solid #ffcd7e;
+        }
+
+        .instruction {
+            background: #7e3bb0;
+            color: white;
+            padding: 1.2rem 2rem;
+            border-radius: 60px;
+            margin: 1.5rem auto 2rem;
+            max-width: 700px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border: 3px solid #ffb347;
+            box-shadow: 0 10px 20px rgba(126, 59, 176, 0.3);
+        }
+
+        .instruction i {
+            margin-right: 10px;
+            color: #ffdb9d;
+        }
+
+        .instruction .chat-link {
+            background: #ffb347;
+            color: #4a2b6e;
+            padding: 0.3rem 1.5rem;
+            border-radius: 40px;
+            margin-left: 10px;
+            font-weight: 800;
+            display: inline-block;
+            border: 2px solid white;
+        }
+
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.8rem;
+            margin: 2rem 0 2.2rem 0;
+        }
+
+        .tab-btn {
+            background: white;
+            border: 2px solid #c8a7e0;
+            padding: 0.8rem 2rem;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #4a2b6e;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 6px 12px rgba(126, 50, 178, 0.15);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-btn i {
+            font-size: 1.1rem;
+            color: #9f4dbf;
+        }
+
+        .tab-btn.active {
+            background: #7e3bb0;
+            border-color: #ffb347;
+            color: white;
+            box-shadow: 0 12px 20px -8px #7e3bb0;
+        }
+
+        .tab-btn.active i {
+            color: #ffdb9d;
+        }
+
+        .teams-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 1.8rem;
+            margin-top: 1rem;
+        }
+
+        .team-card {
+            background: linear-gradient(145deg, #ffffff, #fcf4ff);
+            border-radius: 28px;
+            padding: 1.5rem 1.3rem 1.3rem 1.3rem;
+            box-shadow: 0 20px 30px -10px rgba(106, 27, 154, 0.25);
+            transition: transform 0.2s ease, box-shadow 0.2s;
+            border: 2px solid #ffb347;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .team-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 28px 35px -12px #8031c7;
+            border-color: #7e3bb0;
+        }
+
+        .team-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            border-bottom: 2px dashed #d9b0ff;
+            padding-bottom: 0.7rem;
+        }
+
+        .team-name {
+            font-weight: 800;
+            font-size: 1.4rem;
+            color: #4a2b6e;
+            letter-spacing: -0.3px;
+            word-break: break-word;
+            max-width: 75%;
+        }
+
+        .team-direction {
+            background: #ffdca8;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: #5f2d8f;
+            white-space: nowrap;
+            border: 1px solid #ffb347;
+        }
+
+        .members-list {
+            list-style: none;
+            margin: 0.5rem 0 0.8rem 0;
+        }
+
+        .member-item {
+            display: flex;
+            align-items: center;
+            padding: 0.6rem 0.3rem 0.6rem 1rem;
+            border-radius: 40px;
+            margin: 0.2rem 0;
+            background: #f5eaff;
+            border: 1px solid transparent;
+        }
+
+        .member-item:hover {
+            background: #eddafe;
+            border-color: #d5aaff;
+        }
+
+        .member-name {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #311b4b;
+            word-break: break-word;
+        }
+
+        .member-item i {
+            color: #7e3bb0;
+            margin-right: 12px;
+            font-size: 0.9rem;
+        }
+
+        .team-footer {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 0.8rem;
+            padding-top: 0.6rem;
+            border-top: 2px solid #f0d5ff;
+        }
+
+        .member-count {
+            background: #ffdb9d;
+            padding: 0.4rem 1.4rem;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #4a2b6e;
+            border: 1px solid #ffb347;
+            box-shadow: 0 2px 8px rgba(255, 180, 71, 0.3);
+        }
+
+        .member-count i {
+            margin-right: 6px;
+            color: #7e3bb0;
+        }
+
+        .call-to-action {
+            background: #ffb347;
+            color: #4a2b6e;
+            border-radius: 60px;
+            padding: 1.5rem 2rem;
+            margin: 3rem auto 1rem;
+            max-width: 800px;
+            text-align: center;
+            font-size: 1.4rem;
+            font-weight: 700;
+            border: 4px solid #7e3bb0;
+            box-shadow: 0 15px 25px rgba(126, 59, 176, 0.25);
+        }
+
+        .call-to-action i {
+            font-size: 2rem;
+            margin: 0 10px;
+            color: #7e3bb0;
+        }
+
+        .telegram-btn {
+            display: inline-block;
+            background: #7e3bb0;
+            color: white;
+            padding: 0.8rem 2.5rem;
+            border-radius: 60px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.3rem;
+            margin-top: 1rem;
+            border: 3px solid #ffdb9d;
+            transition: all 0.2s;
+        }
+
+        .telegram-btn:hover {
+            background: #6a2f99;
+            transform: scale(1.02);
+            border-color: white;
+        }
+
+        .empty-message {
+            text-align: center;
+            font-size: 1.5rem;
+            color: #6b2f8b;
+            grid-column: 1 / -1;
+            padding: 3rem;
+            background: #ffeac2;
+            border-radius: 60px;
+            border: 2px dashed #ffb347;
+        }
+
+        @media (max-width: 500px) {
+            .header h1 { font-size: 2rem; }
+            .header h2 { font-size: 1.2rem; }
+            .instruction { font-size: 1rem; padding: 1rem; }
+            .call-to-action { font-size: 1.1rem; }
+            .tabs { gap: 0.5rem; }
+            .tab-btn { padding: 0.6rem 1.2rem; font-size: 0.9rem; }
+        }
+    </style>
 </head>
 <body>
-  <h1>Hello, World!</h1>
-    <p>Привет из Алгоритмики</p>
-    <p>Привет из Алгоритмики</p>
-  </body>
+    <!-- Анимация падающих звёздочек -->
+    <div id="stars-container"></div>
+    <style>
+        #stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #ffb347;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #ffb347, 0 0 20px #ffb347;
+            opacity: 0.8;
+            animation: fall linear infinite;
+        }
+
+            .star.purple {
+                background: #9f4dbf;
+                box-shadow: 0 0 10px #9f4dbf, 0 0 20px #9f4dbf;
+            }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+            }
+        }
+    </style>
+
+    <script>
+        // Создание падающих звёздочек
+        function createStars() {
+            const container = document.getElementById('stars-container');
+            const starCount = 100; // количество звёздочек
+
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+
+                // Случайный цвет (фиолетовый или жёлтый)
+                if (Math.random() > 0.5) {
+                    star.classList.add('purple');
+                }
+
+                // Случайный размер (2-6px)
+                const size = Math.random() * 4 + 2;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+
+                // Случайная позиция слева
+                star.style.left = Math.random() * 100 + '%';
+
+                // Случайная задержка анимации
+                star.style.animationDuration = Math.random() * 3 + 2 + 's'; // 2-5 секунд
+                star.style.animationDelay = Math.random() * 5 + 's';
+
+                container.appendChild(star);
+            }
+        }
+
+        // Запускаем после загрузки страницы
+        window.addEventListener('load', createStars);
+    </script>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 ХАКАТОН АЛГОРИТМИКА ПЕНЗА 2026</h1>
+            <h2>
+                <span class="badge-total"><i class="fas fa-users"></i> 49 команд · 200+ участников</span>
+                <span class="badge-total"><i class="fas fa-comment"></i> Отметьтесь в беседе</span>
+            </h2>
+        </div>
+        <div class="attendance-legend">
+          <span class="legend-item"><span class="badge attended">🎯</span> Посетил консультацию</span>
+        </div>
+
+        <!-- Яркая инструкция -->
+        <div class="instruction">
+            <i class="fas fa-arrow-right"></i>
+            Нашли свою команду? Напишите в чат:
+            <span class="chat-link"><i class="fab fa-telegram"></i> "Команда [название] в сборе!"</span>
+        </div>
+
+        <!-- Вкладки направлений -->
+        <div class="tabs" id="categoryTabs">
+            <button class="tab-btn active" data-category="scratch-start"><i class="fas fa-puzzle-piece"></i> Scratch Start</button>
+            <button class="tab-btn" data-category="scratch-pro"><i class="fas fa-code"></i> Scratch Pro</button>
+            <button class="tab-btn" data-category="design-start"><i class="fas fa-pen-fancy"></i> Design Start</button>
+            <button class="tab-btn" data-category="python-start"><i class="fab fa-python"></i> Python Start</button>
+            <button class="tab-btn" data-category="python-advanced"><i class="fas fa-rocket"></i> Python Advanced</button>
+        </div>
+
+        <!-- Контейнер для карточек команд -->
+        <div id="teamsContainer" class="teams-grid"></div>
+
+        <!-- Большая кнопка для перехода в чат -->
+        <div class="call-to-action">
+            <i class="fas fa-check-circle"></i>
+            ВСЕ В СБОРЕ? ПИШИТЕ В ЧАТ!
+            <i class="fas fa-check-circle"></i>
+            <br>
+            <a href="https://t.me/+2JJygd8rfeNhY2Uy" target="_blank" class="telegram-btn">
+                <i class="fab fa-telegram-plane"></i> Перейти в беседу
+            </a>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            // ---------- ПОЛНЫЙ СПИСОК КОМАНД (49 штук, имена без отчеств) ----------
+            const teamsData = [
+                // Scratch Start (SS)
+                { name: "Юные хакеры", direction: "SS", category: "scratch-start", members: ["Макаров Тимофей 🎯", "Агеев Артем 🎯", "Шкитов Владимир 🎯", "Бегаев Глеб 🎯", "Кислов Максим 🎯"] },
+                { name: "Стражи алгоритмов", direction: "SS", category: "scratch-start", members: ["Калиганов Илья", "Барышев Максим", "Ростягайло Никита", "Слинкин Иван 🎯", "Шапоров Константин 🎯"] },
+                { name: "Милки вей", direction: "SS", category: "scratch-start", members: ["Пяткова Ева", "Николайчев Арсений 🎯", "Тюгаев Александр 🎯", "Чепелевский Марк 🎯", "Внук-Карпов Николай 🎯"] },
+                { name: "Virtual Creators", direction: "SS", category: "scratch-start", members: ["Клюев Илья 🎯", "Шаронов Дмитрий 🎯", "Маглеев Эльдар 🎯", "Лучинкин Дмитрий"] },
+                { name: "Улётный движ", direction: "SS", category: "scratch-start", members: ["Амурская Ксения 🎯", "Царёв Артем 🎯", "Макарова Варвара 🎯", "Козленко Федор"] },
+                { name: "Юные скрейчеры", direction: "SS", category: "scratch-start", members: ["Воеков Давид", "Лопатинский Степан 🎯", "Теплов Матвей 🎯", "Архипов Матвей 🎯"] },
+                { name: "Победители", direction: "SS", category: "scratch-start", members: ["Надеев Максим 🎯", "Яшин Михаил 🎯", "Макеев Матвей 🎯", "Молянов Даниил 🎯"] },
+
+                // Scratch Pro (SP)
+                { name: "Сверхнова", direction: "SP", category: "scratch-pro", members: ["Жулев Борис 🎯", "Желудов Александр 🎯", "Краюхин Кирилл 🎯", "Уткина Алиса", "Коновалова Елизавета"] },
+                { name: "Алгохакеры (переполнена)", direction: "SP", category: "scratch-pro", members: ["Балашов Назар 🎯", "Ключников Климентий", "Милованов Дмитрий", "Муштаков Вячеслав 🎯", "Зимин Харитон 🎯", "Андреев Александр"] },
+                { name: "ScratchBall", direction: "SP", category: "scratch-pro", members: ["Ледяев Данила 🎯", "Ивашин Матвей", "Пизаев Константин", "Решетников Родион", "Чиркин Даниил 🎯"] },
+                { name: "Scrath-еры", direction: "SP", category: "scratch-pro", members: ["Цыганкин Тимофей 🎯", "Малышев Егор 🎯", "Пивцов Никита 🎯", "Сошников Никита"] },
+                { name: "КВАНТУМ ПРО", direction: "SP", category: "scratch-pro", members: ["Бардин Тимур", "Комаров Гордей", "Каняев Артём", "Олереску Алекс", "Евдокимова Кристина"] },
+                { name: "Цифровые пионеры", direction: "SP", category: "scratch-pro", members: ["Кулагин Платон", "Бусаров Степан", "Давид Бакушев", "Святослав Лучшев", "Михаил Аношкин"] },
+                { name: "Algo+", direction: "SP", category: "scratch-pro", members: ["Фатеев Андрей 🎯", "Фатеев Георгий 🎯", "Змеев Тимофей 🎯", "Васянин Даниил"] },
+
+                // Design Pro (дизайн-команды)
+                { name: "Кот в мешке", direction: "Дизайн старт", category: "design-start", members: ["Боромыченко Екатерина 🎯", "Макушкина Юлиана",  "Вахрамеева София 🎯"] },
+                { name: "Незнакомцы", direction: "Дизайн старт", category: "design-start", members: ["Волкова Ксения 🎯", "Сафронова Екатерина", "Тришина Анна 🎯"] },
+                { name: "АРТ - КВАНТУМ", direction: "Дизайн старт", category: "design-start", members: ["Наталья Усова", "Анастасия Красникова", "Агата Болдырева"] },
+                { name: "Двойной эскиз", direction: "Дизайн старт", category: "design-start", members: ["Корягина София 🎯", "Калашникова Ярослава 🎯"] },
+                { name: "Я художник, я так вижу", direction: "Дизайн старт", category: "design-start", members: ["Сякушев Тамерлан 🎯", "Кочут Степан 🎯"] },
+        
+
+                // Python Start (PS)
+                { name: "Крутая банда", direction: "PS", category: "python-start", members: ["Попов Глеб 🎯", "Корнилова Алёна 🎯", "Сапожников Олег 🎯"] },
+                { name: "Тон-Питон", direction: "PS", category: "python-start", members: ["Жешко Валерия", "Рахимов Ильяс 🎯", "Забродин Илья 🎯"] },
+                { name: "Метеостанция", direction: "PS", category: "python-start", members: ["Юранов Максим 🎯", "Афонин Александр 🎯", "Королёв Филипп 🎯"] },
+                { name: "Capybara Team", direction: "PS", category: "python-start", members: ["Крюков Сергей 🎯", "Мукосеев Семен 🎯", "Семиков Артем 🎯","Кузнецов Артем 🎯","Кузнецов Тимофей 🎯"] },
+                { name: "БайтБанда", direction: "PS", category: "python-start", members: ["Баканов Андрей 🎯", "Ивкин Андрей 🎯", "Осипова Алена 🎯", "Рамзаева Ксения 🎯"] },
+                { name: "Game forge", direction: "PS", category: "python-start", members: ["Старцев Павел 🎯", "Гудков Кирилл", "Каузов Даниил", "Карпова Яна", "Громиков Олег"] },
+                { name: "Bad input", direction: "PS", category: "python-start", members: ["Филиппов Андрей 🎯", "Коннов Павел🎯", "Деготьков Максим 🎯", "Папшев Илья 🎯", "Павлов Егор 🎯"] },
+                { name: "Жертвы инвалид синтаксис", direction: "PS", category: "python-start", members: ["Биктимиров Данияр 🎯", "Тутаев Дамир 🎯", "Солянов Павел 🎯", "Бараненков Глеб  🎯"] },
+                { name: "HelloWorld('Print')", direction: "PS", category: "python-start", members: ["Уваров Степан", "Кузьмичёв Матвей 🎯", "Митянин Арсений 🎯", "Бадеев Севастьян 🎯"] },
+
+
+                // Python Advanced (PA) — все команды направления
+                { name: "My little pony", direction: "PA", category: "python-advanced", members: ["Блинов Валерий", "Паршин Матвей", "Ростягайло Дмитрий 🎯", "Громиков Владислав 🎯", "Филюнина Виолетта 🎯"] },
+                { name: "Интердисциплинарно-коллективно-синтегрированная-междисциплинарная-суперкоманда", direction: "PA", category: "python-advanced", members: ["Морозов Николай🎯", "Бубнов Даниил 🎯", "Павлов Нил", "Зонов Максим", "Куроедов Михаил"] },
+                { name: "Begemot Team", direction: "PA", category: "python-advanced", members: ["Захаров Тимофей 🎯", "Поляков Антон 🎯", "Трусов Александр 🎯", "Шуков Никита", "Черкасова Варвара 🎯"] },
+                { name: "Gamesense", direction: "PA", category: "python-advanced", members: ["Советкин Кирилл", "Тесемникова Диана", "Шишенков Артемий 🎯", "Козленко Тимофей 🎯", "Иванова Кристина 🎯"] },
+                { name: "Cyber Vultures", direction: "PA", category: "python-advanced", members: ["Велякин Кирилл 🎯", "Харченко Никита", "Якупов Эльдар", "Лепешкина Алиса 🎯", "Клещева Анастасия 🎯"] },
+                { name: "WLVC (We love vibe coding)", direction: "PA", category: "python-advanced", members: ["Шишкин Иван 🎯", "Кан Полина 🎯", "Голованов Артём", "Игошин Константин 🎯"] },
+                { name: "Конкистадоры", direction: "PA", category: "python-advanced", members: ["Вралушкин Данил 🎯", "Горюнова Валерия 🎯", "Ковалёв Вадим 🎯", "Шабанова Дана 🎯", "Шаповалова Ульяна 🎯"] },
+                { name: "Сырники", direction: "PA", category: "python-advanced", members: ["Щеглов Владислав 🎯", "Чемкаев Владислав 🎯", "Костарева Варвара 🎯", "Данилова Мирослава 🎯"] },
+                { name: "ООПтимисты", direction: "PA", category: "python-advanced", members: ["Коломбет Евгения 🎯", "Фомин Андрей 🎯", "Абросимова Варвара", "Скрябин Егор"] },
+                { name: "ОПТИМА", direction: "PA", category: "python-advanced", members: ["Шахин Александр 🎯", "Поляков Дмитрий 🎯", "Камнев Егор", "Францев Александр 🎯", "Хохлова Елизавета"] },
+                { name: "VIPit", direction: "PA", category: "python-advanced", members: ["Филенков Антон 🎯", "Терехин Ярослав 🎯", "Немушев Камиль 🎯", "Терешина Анастасия", "Крюкова Мария"] },
+                { name: "Victorious", direction: "PA", category: "python-advanced", members: ["Григорькин Роман 🎯", "Балашов Всеволод 🎯", "Гулин Кирилл 🎯", "Трубицына Дарья 🎯", "Елисеева Елизавета 🎯"] },
+                { name: "Павел Воля", direction: "PA", category: "python-advanced", members: ["Ратников Дмитрий 🎯", "Макарова Анна", "Кожевников Александр 🎯", "Елисеев Данила 🎯", "Прякина Екатерина 🎯"] },
+                { name: "Знаний.нет", direction: "PA", category: "python-advanced", members: ["Кучерова Анна",  "Хопёрская Александра", "Карамышев Сергей 🎯","Павлов Артем 🎯"] },
+                { name: "Json.убийцы", direction: "PA", category: "python-advanced", members: ["Груздов Дмитрий 🎯", "Ежжижанский Иван", "Синицын Ярослав", "Прокофьев Егор 🎯"] },
+                { name: "Дети индуса", direction: "PA", category: "python-advanced", members: ["Даянов Амир 🎯", "Устинов Артур 🎯", "Фролова Валерия 🎯", "Мамонова Кира 🎯"] },
+                { name: "PyTeam Studio", direction: "PA", category: "python-advanced", members: ["Вохрамеев Ярослав 🎯", "Кузнецов Дмитрий 🎯", "Смельский Ростислав 🎯", "Юдин Егор 🎯", "Скрягина Алена 🎯"] }
+            ];
+
+            // Активная категория
+            let activeCategory = 'scratch-start';
+
+            // Фильтрация команд по категории
+            function getFilteredTeams() {
+                return teamsData.filter(t => t.category === activeCategory);
+            }
+
+            // Рендер
+            function renderTeams() {
+                const container = document.getElementById('teamsContainer');
+                const filtered = getFilteredTeams();
+
+                if (filtered.length === 0) {
+                    container.innerHTML = '<div class="empty-message">✨ В этой категории пока нет команд</div>';
+                    return;
+                }
+
+                let html = '';
+                filtered.forEach(team => {
+                    let membersHtml = '';
+                    team.members.forEach(member => {
+                        membersHtml += `
+                        <li class="member-item">
+                            <i class="fas fa-user"></i>
+                            <span class="member-name">${member}</span>
+                        </li>
+                    `;
+                    });
+
+                    html += `
+                    <div class="team-card">
+                        <div class="team-header">
+                            <span class="team-name">${team.name}</span>
+                            <span class="team-direction">${team.direction}</span>
+                        </div>
+                        <ul class="members-list">
+                            ${membersHtml}
+                        </ul>
+                        <div class="team-footer">
+                            <span class="member-count"><i class="fas fa-users"></i> ${team.members.length} участников</span>
+                        </div>
+                    </div>
+                `;
+                });
+
+                container.innerHTML = html;
+            }
+
+            // Переключение вкладок
+            function initTabs() {
+                const tabs = document.querySelectorAll('.tab-btn');
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        tabs.forEach(t => t.classList.remove('active'));
+                        tab.classList.add('active');
+                        activeCategory = tab.dataset.category;
+                        renderTeams();
+                    });
+                });
+            }
+
+            // Старт
+            renderTeams();
+            initTabs();
+        })();
+    </script>
+</body>
 </html>
